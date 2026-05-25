@@ -1,0 +1,49 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-brand: #db2777;
+  --color-brand-dark: #be185d;
+  --color-brand-light: #fce7f3;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tap targets and focus — in @layer base so Tailwind utilities can override */
+@layer base {
+  :focus-visible {
+    outline: 2px solid #db2777;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  p a,
+  footer a {
+    display: inline;
+    min-height: unset;
+    min-width: unset;
+  }
+}
