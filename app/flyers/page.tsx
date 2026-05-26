@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getAllFlyers } from '@/lib/queries'
+import { TrackPageView } from '@/components/TrackPageView'
 
 export const metadata: Metadata = {
   title: 'Flyer Archive',
@@ -13,6 +14,7 @@ export default async function FlyersPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
+      <TrackPageView event={{ name: 'flyer_archive_view' }} />
       <h1 className="text-3xl font-black text-gray-900 mb-8">Flyer Archive</h1>
 
       {flyers.length === 0 ? (

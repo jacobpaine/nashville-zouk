@@ -5,6 +5,7 @@ import { FlyerCard } from '@/components/FlyerCard'
 import { AddToCalendarButton } from '@/components/AddToCalendarButton'
 import { getEventBySlug, getFlyerForEvent } from '@/lib/queries'
 import { googleCalendarUrl, generateICS } from '@/lib/calendar'
+import { TrackPageView } from '@/components/TrackPageView'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -61,6 +62,7 @@ export default async function EventDetailPage({ params }: Props) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
+      <TrackPageView event={{ name: 'event_detail_view', data: { slug: event.slug, title: event.title } }} />
       {/* Back link */}
       <Link
         href="/events"

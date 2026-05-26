@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getInstructorBySlug } from '@/lib/queries'
+import { TrackPageView } from '@/components/TrackPageView'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -25,6 +26,7 @@ export default async function InstructorProfilePage({ params }: Props) {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
+      <TrackPageView event={{ name: 'instructor_profile_view', data: { slug: instructor.slug } }} />
       <Link
         href="/instructors"
         className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-8 min-h-0 min-w-0"
