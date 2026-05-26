@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/auth'
-
-const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-function isDbConfigured() {
-  return !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-}
-
-function isEmailConfigured() {
-  const key = process.env.RESEND_API_KEY
-  return !!key && !key.startsWith('re_your_api_key')
-}
+import { isDbConfigured, isEmailConfigured } from '@/lib/config'
 
 interface Params { params: Promise<{ id: string }> }
 
@@ -30,25 +21,39 @@ export async function POST(_req: NextRequest, { params }: Params) {
 
   const { db } = await import('@/lib/db')
   const { campaigns, subscribers } = await import('@/lib/schema')
-  const { eq } = await import('drizzle-orm')
+  const { eq, and } = await import('drizzle-orm')
 
-  const campaignRows = await db.select().from(campaigns).where(eq(campaigns.id, id)).limit(1)
-  const campaign = campaignRows[0]
-  if (!campaign) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  if (campaign.status === 'sent') {
-    return NextResponse.json({ error: 'Campaign already sent.' }, { status: 409 })
+  let campaign
+  let recipientRows
+  try {
+    // Atomic lock: marks the campaign sent before sending to prevent double-send on concurrent requests
+    const locked = await db
+      .update(campaigns)
+      .set({ status: 'sent', sentAt: new Date(), updatedAt: new Date() })
+      .where(and(eq(campaigns.id, id), eq(campaigns.status, 'draft')))
+      .returning()
+
+    if (locked.length === 0) {
+      const check = await db
+        .select({ id: campaigns.id })
+        .from(campaigns)
+        .where(eq(campaigns.id, id))
+        .limit(1)
+      if (!check[0]) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Campaign already sent.' }, { status: 409 })
+    }
+
+    campaign = locked[0]
+    recipientRows = await db.select().from(subscribers).where(eq(subscribers.isActive, true))
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: 'Database error.' }, { status: 500 })
   }
-
-  const recipientRows = await db
-    .select()
-    .from(subscribers)
-    .where(eq(subscribers.isActive, true))
 
   if (recipientRows.length === 0) {
     return NextResponse.json({ error: 'No active subscribers.' }, { status: 400 })
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://nashvillezouk.com'
   const wrappedHtml = `<!DOCTYPE html>
 <html>
 <body style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #111827;">
@@ -67,7 +72,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
   const wrappedText = `Hi {{firstName}},\n\n${campaign.bodyText}\n\n---\nYou're receiving this because you signed up at nashvillezouk.com.\nUnsubscribe: {{unsubscribeLink}}`
 
   const { sendBatch } = await import('@/lib/email')
-  await sendBatch(
+  const { sentCount } = await sendBatch(
     recipientRows.map((r) => ({
       email: r.email,
       firstName: r.firstName,
@@ -76,11 +81,15 @@ export async function POST(_req: NextRequest, { params }: Params) {
     { subject: campaign.subject, html: wrappedHtml, text: wrappedText }
   )
 
-  const updated = await db
-    .update(campaigns)
-    .set({ status: 'sent', sentAt: new Date(), recipientCount: recipientRows.length, updatedAt: new Date() })
-    .where(eq(campaigns.id, id))
-    .returning()
-
-  return NextResponse.json(updated[0])
+  try {
+    const final = await db
+      .update(campaigns)
+      .set({ recipientCount: sentCount })
+      .where(eq(campaigns.id, id))
+      .returning()
+    return NextResponse.json(final[0])
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: 'Database error.' }, { status: 500 })
+  }
 }

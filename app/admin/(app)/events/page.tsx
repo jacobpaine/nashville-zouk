@@ -7,10 +7,8 @@ export const metadata: Metadata = { title: 'Events | Admin' }
 
 // Get all events (including unpublished) for admin view
 async function getAdminEvents() {
-  const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-  const isDbConfigured = !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-
-  if (!isDbConfigured) {
+  const { isDbConfigured } = await import('@/lib/config')
+  if (!isDbConfigured()) {
     const { MOCK_EVENTS } = await import('@/lib/mock')
     return MOCK_EVENTS
   }
@@ -30,7 +28,7 @@ export default async function AdminEventsPage() {
         <h1 className="text-2xl font-bold text-gray-900">Events</h1>
         <Link
           href="/admin/events/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-medium text-sm transition-colors shadow-sm min-h-0 min-w-0"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-pink-700 hover:bg-pink-800 text-white rounded-xl font-medium text-sm transition-colors shadow-sm min-h-0 min-w-0"
         >
           + New Event
         </Link>
@@ -44,7 +42,7 @@ export default async function AdminEventsPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">

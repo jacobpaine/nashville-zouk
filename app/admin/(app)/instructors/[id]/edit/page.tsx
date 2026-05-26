@@ -10,10 +10,8 @@ interface Props {
 }
 
 async function getInstructor(id: string) {
-  const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-  const isDbConfigured = !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-
-  if (!isDbConfigured) {
+  const { isDbConfigured } = await import('@/lib/config')
+  if (!isDbConfigured()) {
     const { MOCK_INSTRUCTORS } = await import('@/lib/mock')
     return MOCK_INSTRUCTORS.find((i) => i.id === id) ?? null
   }

@@ -5,10 +5,7 @@ import { cookies } from 'next/headers'
 import { getIronSession } from 'iron-session'
 import { sessionOptions, type SessionData } from '@/lib/auth'
 
-const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-function isDbConfigured() {
-  return !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-}
+import { isDbConfigured } from '@/lib/config'
 
 export type LoginState = { error?: string }
 

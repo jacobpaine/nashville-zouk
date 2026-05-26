@@ -129,6 +129,7 @@ export function AdminNav({ email }: AdminNavProps) {
             </button>
           </form>
         </div>
+        <div className="relative">
         <nav className="flex overflow-x-auto">
           {NAV_ITEMS.map((item) => {
             const active = pathname === item.href || pathname.startsWith(item.href + '/')
@@ -148,6 +149,8 @@ export function AdminNav({ email }: AdminNavProps) {
             )
           })}
         </nav>
+        <div className="pointer-events-none absolute right-0 inset-y-0 w-10 bg-gradient-to-l from-gray-950 to-transparent" aria-hidden="true" />
+        </div>
       </div>
     </>
   )

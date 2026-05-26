@@ -28,8 +28,8 @@ export async function sendBatch(
     html: string
     text: string
   }
-) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL!
+): Promise<{ sentCount: number; errors: number }> {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://nashvillezouk.com'
   const batch = recipients.map(({ email, firstName, unsubscribeToken }) => {
     const unsubscribeLink = `${appUrl}/unsubscribe?token=${unsubscribeToken}`
     const personalizedHtml = html
@@ -42,11 +42,18 @@ export async function sendBatch(
     return { from, to: email, subject, html: personalizedHtml, text: personalizedText }
   })
 
+  let sentCount = 0
+  let errors = 0
   // Resend batch limit is 100 per call
-  const results = []
   for (let i = 0; i < batch.length; i += 100) {
     const chunk = batch.slice(i, i + 100)
-    results.push(await resend.batch.send(chunk))
+    try {
+      await resend.batch.send(chunk)
+      sentCount += chunk.length
+    } catch (err) {
+      console.error(`Email batch chunk [${i}–${i + chunk.length}] failed:`, err)
+      errors += chunk.length
+    }
   }
-  return results
+  return { sentCount, errors }
 }

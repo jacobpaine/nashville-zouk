@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/auth'
-
-const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-function isDbConfigured() {
-  return !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-}
+import { isDbConfigured } from '@/lib/config'
 
 interface Params { params: Promise<{ id: string }> }
 
@@ -16,26 +12,42 @@ export async function PUT(request: NextRequest, { params }: Params) {
   const { id } = await params
   const body = await request.json()
 
+  // Explicit allowlist — never spread the full request body into a DB update
+  const { isCurrent, eventId, title } = body as {
+    isCurrent?: boolean
+    eventId?: string | null
+    title?: string
+  }
+
   if (!isDbConfigured()) {
-    return NextResponse.json({ id, ...body, message: 'dev-mode: not persisted' })
+    return NextResponse.json({ id, isCurrent, eventId, title, message: 'dev-mode: not persisted' })
   }
 
-  const { db } = await import('@/lib/db')
-  const { flyers } = await import('@/lib/schema')
-  const { eq, ne } = await import('drizzle-orm')
+  try {
+    const { db } = await import('@/lib/db')
+    const { flyers } = await import('@/lib/schema')
+    const { eq, ne } = await import('drizzle-orm')
 
-  // If setting as current, clear all others first
-  if (body.isCurrent) {
-    await db.update(flyers).set({ isCurrent: false }).where(ne(flyers.id, id))
+    if (isCurrent) {
+      await db.update(flyers).set({ isCurrent: false }).where(ne(flyers.id, id))
+    }
+
+    const rows = await db.update(flyers)
+      .set({
+        isCurrent: typeof isCurrent === 'boolean' ? isCurrent : undefined,
+        eventId: 'eventId' in body ? (eventId ?? null) : undefined,
+        title: typeof title === 'string' && title.trim() ? title.trim() : undefined,
+        updatedAt: new Date(),
+      })
+      .where(eq(flyers.id, id))
+      .returning()
+
+    if (!rows[0]) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    return NextResponse.json(rows[0])
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: 'Database error.' }, { status: 500 })
   }
-
-  const rows = await db.update(flyers)
-    .set({ ...body, updatedAt: new Date() })
-    .where(eq(flyers.id, id))
-    .returning()
-
-  if (!rows[0]) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  return NextResponse.json(rows[0])
 }
 
 export async function DELETE(_request: NextRequest, { params }: Params) {
@@ -49,19 +61,24 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
     return NextResponse.json({ message: 'dev-mode: not persisted' })
   }
 
-  const { db } = await import('@/lib/db')
-  const { flyers } = await import('@/lib/schema')
-  const { eq } = await import('drizzle-orm')
+  try {
+    const { db } = await import('@/lib/db')
+    const { flyers } = await import('@/lib/schema')
+    const { eq } = await import('drizzle-orm')
 
-  const rows = await db.select().from(flyers).where(eq(flyers.id, id)).limit(1)
-  const flyer = rows[0]
-  if (!flyer) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    const rows = await db.select().from(flyers).where(eq(flyers.id, id)).limit(1)
+    const flyer = rows[0]
+    if (!flyer) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  if (flyer.imageKey) {
-    const { deleteFile } = await import('@/lib/storage')
-    await deleteFile(flyer.imageKey).catch(console.error)
+    if (flyer.imageKey) {
+      const { deleteFile } = await import('@/lib/storage')
+      await deleteFile(flyer.imageKey).catch(console.error)
+    }
+
+    await db.delete(flyers).where(eq(flyers.id, id))
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: 'Database error.' }, { status: 500 })
   }
-
-  await db.delete(flyers).where(eq(flyers.id, id))
-  return NextResponse.json({ success: true })
 }

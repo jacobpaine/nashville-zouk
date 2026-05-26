@@ -71,7 +71,7 @@ export default function AdminFlyersPage() {
                     className="object-cover"
                   />
                   {flyer.isCurrent && (
-                    <div className="absolute top-2 left-2 bg-pink-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    <div className="absolute top-2 left-2 bg-pink-700 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                       Current
                     </div>
                   )}

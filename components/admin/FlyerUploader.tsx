@@ -159,7 +159,7 @@ export function FlyerUploader({ onSuccess }: FlyerUploaderProps) {
         <button
           type="submit"
           disabled={uploading || !title.trim()}
-          className="px-6 py-2.5 bg-pink-600 hover:bg-pink-700 disabled:opacity-60 text-white rounded-xl font-medium transition-colors shadow-sm min-h-0 min-w-0"
+          className="px-6 py-2.5 bg-pink-700 hover:bg-pink-800 disabled:opacity-60 text-white rounded-xl font-medium transition-colors shadow-sm min-h-0 min-w-0"
         >
           {uploading ? 'Uploading…' : 'Upload Flyer'}
         </button>

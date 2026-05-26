@@ -1,45 +1,39 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
-const s3 = new S3Client({
-  region: process.env.AWS_REGION!,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  },
-})
+let _s3: S3Client | null = null
 
-const bucket = process.env.AWS_S3_BUCKET!
-const publicUrl = process.env.AWS_S3_PUBLIC_URL!
+function getS3Client(): S3Client {
+  if (!_s3) {
+    _s3 = new S3Client({
+      region: process.env.AWS_REGION!,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+      },
+    })
+  }
+  return _s3
+}
+
+function getBucket() { return process.env.AWS_S3_BUCKET! }
+function getPublicUrl() { return process.env.AWS_S3_PUBLIC_URL! }
 
 export async function uploadFile(
   key: string,
   body: Buffer,
   contentType: string
 ): Promise<string> {
-  await s3.send(
+  await getS3Client().send(
     new PutObjectCommand({
-      Bucket: bucket,
+      Bucket: getBucket(),
       Key: key,
       Body: body,
       ContentType: contentType,
     })
   )
-  return `${publicUrl}/${key}`
+  return `${getPublicUrl()}/${key}`
 }
 
 export async function deleteFile(key: string): Promise<void> {
-  await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }))
-}
-
-export async function getPresignedUploadUrl(
-  key: string,
-  contentType: string,
-  expiresIn = 300
-): Promise<string> {
-  return getSignedUrl(
-    s3,
-    new PutObjectCommand({ Bucket: bucket, Key: key, ContentType: contentType }),
-    { expiresIn }
-  )
+  await getS3Client().send(new DeleteObjectCommand({ Bucket: getBucket(), Key: key }))
 }

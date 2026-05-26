@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { CampaignForm } from '@/components/admin/CampaignForm'
 import { CampaignSendButton } from '@/components/admin/CampaignSendButton'
+import { CampaignTestSendForm } from '@/components/admin/CampaignTestSendForm'
 
 export const metadata: Metadata = { title: 'Campaign | Admin' }
 
@@ -11,10 +12,8 @@ interface Props {
 }
 
 async function getCampaign(id: string) {
-  const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-  const isDbConfigured = !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-
-  if (!isDbConfigured) return null
+  const { isDbConfigured } = await import('@/lib/config')
+  if (!isDbConfigured()) return null
 
   const { db } = await import('@/lib/db')
   const { campaigns } = await import('@/lib/schema')
@@ -77,6 +76,14 @@ export default async function CampaignDetailPage({ params }: Props) {
               bodyText: campaign.bodyText,
             }}
           />
+
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+            <h2 className="text-sm font-semibold text-gray-700 mb-1">Send a test</h2>
+            <p className="text-xs text-gray-400 mb-3">
+              Preview the rendered email in your inbox before sending to all subscribers.
+            </p>
+            <CampaignTestSendForm campaignId={campaign.id} />
+          </div>
 
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
             <h2 className="text-base font-semibold text-amber-900 mb-2">Ready to send?</h2>

@@ -9,10 +9,8 @@ import { MOCK_EVENTS } from '@/lib/mock'
 interface Props { params: Promise<{ id: string }> }
 
 async function getEventById(id: string) {
-  const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-  const isDbConfigured = !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-
-  if (!isDbConfigured) {
+  const { isDbConfigured } = await import('@/lib/config')
+  if (!isDbConfigured()) {
     return MOCK_EVENTS.find((e) => e.id === id) ?? null
   }
 

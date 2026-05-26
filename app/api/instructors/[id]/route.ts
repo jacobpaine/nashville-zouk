@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/auth'
-
-const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-function isDbConfigured() {
-  return !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-}
+import { isDbConfigured } from '@/lib/config'
 
 interface Params { params: Promise<{ id: string }> }
 
@@ -19,12 +15,17 @@ export async function GET(_req: NextRequest, { params }: Params) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 
-  const { db } = await import('@/lib/db')
-  const { instructors } = await import('@/lib/schema')
-  const { eq } = await import('drizzle-orm')
-  const rows = await db.select().from(instructors).where(eq(instructors.id, id)).limit(1)
-  if (!rows[0]) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  return NextResponse.json(rows[0])
+  try {
+    const { db } = await import('@/lib/db')
+    const { instructors } = await import('@/lib/schema')
+    const { eq } = await import('drizzle-orm')
+    const rows = await db.select().from(instructors).where(eq(instructors.id, id)).limit(1)
+    if (!rows[0]) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    return NextResponse.json(rows[0])
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: 'Database error.' }, { status: 500 })
+  }
 }
 
 export async function PUT(request: NextRequest, { params }: Params) {
@@ -44,10 +45,10 @@ export async function PUT(request: NextRequest, { params }: Params) {
     return NextResponse.json({ id, name, slug, bio, instagramHandle, displayOrder, isActive })
   }
 
-  const { db } = await import('@/lib/db')
-  const { instructors } = await import('@/lib/schema')
-  const { eq } = await import('drizzle-orm')
   try {
+    const { db } = await import('@/lib/db')
+    const { instructors } = await import('@/lib/schema')
+    const { eq } = await import('drizzle-orm')
     const rows = await db
       .update(instructors)
       .set({
@@ -68,7 +69,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
     if (pg?.code === '23505') {
       return NextResponse.json({ error: 'Slug already in use.' }, { status: 409 })
     }
-    throw err
+    console.error(err)
+    return NextResponse.json({ error: 'Database error.' }, { status: 500 })
   }
 }
 
@@ -83,19 +85,24 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
     return new NextResponse(null, { status: 204 })
   }
 
-  const { db } = await import('@/lib/db')
-  const { instructors } = await import('@/lib/schema')
-  const { eq } = await import('drizzle-orm')
+  try {
+    const { db } = await import('@/lib/db')
+    const { instructors } = await import('@/lib/schema')
+    const { eq } = await import('drizzle-orm')
 
-  const rows = await db.select().from(instructors).where(eq(instructors.id, id)).limit(1)
-  const instructor = rows[0]
-  if (!instructor) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    const rows = await db.select().from(instructors).where(eq(instructors.id, id)).limit(1)
+    const instructor = rows[0]
+    if (!instructor) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  if (instructor.photoKey) {
-    const { deleteFile } = await import('@/lib/storage')
-    await deleteFile(instructor.photoKey).catch(() => null)
+    if (instructor.photoKey) {
+      const { deleteFile } = await import('@/lib/storage')
+      await deleteFile(instructor.photoKey).catch(() => null)
+    }
+
+    await db.delete(instructors).where(eq(instructors.id, id))
+    return new NextResponse(null, { status: 204 })
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: 'Database error.' }, { status: 500 })
   }
-
-  await db.delete(instructors).where(eq(instructors.id, id))
-  return new NextResponse(null, { status: 204 })
 }

@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const TYPE_LABELS = { social: 'Social Dance', workshop: 'Workshop', class: 'Class' }
 const TYPE_COLORS = {
-  social: 'bg-pink-50 text-pink-700 border-pink-200',
+  social: 'bg-pink-50 text-pink-800 border-pink-200',
   workshop: 'bg-violet-50 text-violet-700 border-violet-200',
   class: 'bg-amber-50 text-amber-700 border-amber-200',
 }

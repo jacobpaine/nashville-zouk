@@ -87,7 +87,7 @@ export function CampaignForm({ initialData }: CampaignFormProps) {
         <button
           type="submit"
           disabled={saving}
-          className="px-5 py-2.5 bg-pink-600 hover:bg-pink-700 disabled:opacity-50 text-white rounded-xl font-medium text-sm transition-colors min-h-0 min-w-0"
+          className="px-5 py-2.5 bg-pink-700 hover:bg-pink-800 disabled:opacity-50 text-white rounded-xl font-medium text-sm transition-colors min-h-0 min-w-0"
         >
           {saving ? 'Saving…' : isEdit ? 'Save draft' : 'Create draft'}
         </button>

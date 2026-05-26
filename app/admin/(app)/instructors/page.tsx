@@ -7,10 +7,8 @@ import { MOCK_INSTRUCTORS } from '@/lib/mock'
 export const metadata: Metadata = { title: 'Instructors | Admin' }
 
 async function getAdminInstructors() {
-  const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-  const isDbConfigured = !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-
-  if (!isDbConfigured) return MOCK_INSTRUCTORS
+  const { isDbConfigured } = await import('@/lib/config')
+  if (!isDbConfigured()) return MOCK_INSTRUCTORS
 
   const { db } = await import('@/lib/db')
   const { instructors } = await import('@/lib/schema')
@@ -27,7 +25,7 @@ export default async function AdminInstructorsPage() {
         <h1 className="text-2xl font-bold text-gray-900">Instructors</h1>
         <Link
           href="/admin/instructors/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-medium text-sm transition-colors shadow-sm min-h-0 min-w-0"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-pink-700 hover:bg-pink-800 text-white rounded-xl font-medium text-sm transition-colors shadow-sm min-h-0 min-w-0"
         >
           + New Instructor
         </Link>
@@ -41,7 +39,7 @@ export default async function AdminInstructorsPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">

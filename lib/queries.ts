@@ -1,22 +1,27 @@
 import { eq, gte, and, asc, desc } from 'drizzle-orm'
-import type { Event, Flyer, Instructor } from './schema'
+import type { Event, Instructor } from './schema'
 import { MOCK_EVENTS, MOCK_FLYER, MOCK_INSTRUCTORS } from './mock'
-
-const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-
-function isDbConfigured(): boolean {
-  const url = process.env.DATABASE_URL
-  return !!url && url !== PLACEHOLDER_URL
-}
+import { isDbConfigured } from './config'
 
 function getDb() {
-  // Dynamic import to avoid module-level crash when DATABASE_URL is missing
   const { db } = require('./db') as { db: import('drizzle-orm/neon-http').NeonHttpDatabase<typeof import('./schema')> }
   return db
 }
 
 function getSchema() {
   return require('./schema') as typeof import('./schema')
+}
+
+export type FlyerWithSlug = {
+  id: string
+  title: string
+  imageUrl: string
+  imageKey: string
+  eventId: string | null
+  isCurrent: boolean
+  createdAt: Date
+  updatedAt: Date
+  eventSlug: string | null
 }
 
 // ─── Events ──────────────────────────────────────────────────────────────────
@@ -59,13 +64,17 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
   }
   const db = getDb()
   const { events } = getSchema()
-  const rows = await db.select().from(events).where(eq(events.slug, slug)).limit(1)
+  const rows = await db
+    .select()
+    .from(events)
+    .where(and(eq(events.slug, slug), eq(events.isPublished, true)))
+    .limit(1)
   return rows[0] ?? null
 }
 
 // ─── Flyers ───────────────────────────────────────────────────────────────────
 
-export async function getCurrentFlyer(): Promise<Flyer | null> {
+export async function getCurrentFlyer() {
   if (!isDbConfigured()) return MOCK_FLYER
   const db = getDb()
   const { flyers } = getSchema()
@@ -73,7 +82,7 @@ export async function getCurrentFlyer(): Promise<Flyer | null> {
   return rows[0] ?? null
 }
 
-export async function getFlyerForEvent(flyerId: string): Promise<Flyer | null> {
+export async function getFlyerForEvent(flyerId: string) {
   if (!isDbConfigured()) {
     return flyerId === MOCK_FLYER.id ? MOCK_FLYER : null
   }
@@ -83,11 +92,25 @@ export async function getFlyerForEvent(flyerId: string): Promise<Flyer | null> {
   return rows[0] ?? null
 }
 
-export async function getAllFlyers(): Promise<Flyer[]> {
-  if (!isDbConfigured()) return [MOCK_FLYER]
+export async function getAllFlyers(): Promise<FlyerWithSlug[]> {
+  if (!isDbConfigured()) return [{ ...MOCK_FLYER, eventSlug: null }]
   const db = getDb()
-  const { flyers } = getSchema()
-  return db.select().from(flyers).orderBy(desc(flyers.createdAt))
+  const { flyers, events } = getSchema()
+  return db
+    .select({
+      id: flyers.id,
+      title: flyers.title,
+      imageUrl: flyers.imageUrl,
+      imageKey: flyers.imageKey,
+      eventId: flyers.eventId,
+      isCurrent: flyers.isCurrent,
+      createdAt: flyers.createdAt,
+      updatedAt: flyers.updatedAt,
+      eventSlug: events.slug,
+    })
+    .from(flyers)
+    .leftJoin(events, eq(flyers.eventId, events.id))
+    .orderBy(desc(flyers.createdAt))
 }
 
 // ─── Instructors ─────────────────────────────────────────────────────────────

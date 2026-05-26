@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/auth'
-
-const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-function isDbConfigured() {
-  return !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-}
+import { isDbConfigured } from '@/lib/config'
 
 export async function GET() {
   try { await requireAdmin() } catch {
@@ -15,9 +11,14 @@ export async function GET() {
     return NextResponse.json([])
   }
 
-  const { db } = await import('@/lib/db')
-  const { subscribers } = await import('@/lib/schema')
-  const { desc } = await import('drizzle-orm')
-  const rows = await db.select().from(subscribers).orderBy(desc(subscribers.subscribedAt))
-  return NextResponse.json(rows)
+  try {
+    const { db } = await import('@/lib/db')
+    const { subscribers } = await import('@/lib/schema')
+    const { desc } = await import('drizzle-orm')
+    const rows = await db.select().from(subscribers).orderBy(desc(subscribers.subscribedAt))
+    return NextResponse.json(rows)
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: 'Database error.' }, { status: 500 })
+  }
 }

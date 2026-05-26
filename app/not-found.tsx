@@ -16,7 +16,7 @@ export default function NotFound() {
         </p>
         <Link
           href="/"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-semibold transition-colors shadow-sm min-h-0 min-w-0"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-pink-700 hover:bg-pink-800 text-white rounded-xl font-semibold transition-colors shadow-sm min-h-0 min-w-0"
         >
           Back to Nashville Zouk
         </Link>

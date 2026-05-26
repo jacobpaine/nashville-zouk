@@ -22,8 +22,8 @@ export default async function FlyersPage() {
           {flyers.map((flyer) => (
             <div key={flyer.id} className="group relative">
               <div className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow bg-gray-100">
-                {flyer.eventId ? (
-                  <Link href={`/events`} className="block w-full h-full min-h-0 min-w-0">
+                {flyer.eventSlug ? (
+                  <Link href={`/events/${flyer.eventSlug}`} className="block w-full h-full min-h-0 min-w-0">
                     <Image
                       src={flyer.imageUrl}
                       alt={flyer.title}
@@ -42,7 +42,7 @@ export default async function FlyersPage() {
 
                 {flyer.isCurrent && (
                   <div className="absolute top-2 left-2">
-                    <span className="bg-pink-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
+                    <span className="bg-pink-700 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
                       Current
                     </span>
                   </div>

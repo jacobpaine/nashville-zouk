@@ -8,7 +8,7 @@ const TYPE_LABELS: Record<Event['eventType'], string> = {
 }
 
 const TYPE_COLORS: Record<Event['eventType'], string> = {
-  social: 'bg-pink-50 text-pink-700',
+  social: 'bg-pink-50 text-pink-800',
   workshop: 'bg-violet-50 text-violet-700',
   class: 'bg-amber-50 text-amber-700',
 }

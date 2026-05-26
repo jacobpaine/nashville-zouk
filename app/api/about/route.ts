@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/auth'
-
-const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-function isDbConfigured() {
-  return !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-}
+import { isDbConfigured } from '@/lib/config'
 
 const MOCK_CONTENT = `## Welcome to Nashville Zouk
 
@@ -23,10 +19,15 @@ export async function GET() {
     return NextResponse.json({ content: MOCK_CONTENT })
   }
 
-  const { db } = await import('@/lib/db')
-  const { aboutContent } = await import('@/lib/schema')
-  const rows = await db.select().from(aboutContent).limit(1)
-  return NextResponse.json({ content: rows[0]?.content ?? '' })
+  try {
+    const { db } = await import('@/lib/db')
+    const { aboutContent } = await import('@/lib/schema')
+    const rows = await db.select().from(aboutContent).limit(1)
+    return NextResponse.json({ content: rows[0]?.content ?? '' })
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: 'Database error.' }, { status: 500 })
+  }
 }
 
 export async function PUT(request: NextRequest) {
@@ -45,15 +46,20 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ content })
   }
 
-  const { db } = await import('@/lib/db')
-  const { aboutContent } = await import('@/lib/schema')
-  const rows = await db.select().from(aboutContent).limit(1)
+  try {
+    const { db } = await import('@/lib/db')
+    const { aboutContent } = await import('@/lib/schema')
+    const rows = await db.select().from(aboutContent).limit(1)
 
-  if (rows[0]) {
-    await db.update(aboutContent).set({ content, updatedAt: new Date() })
-  } else {
-    await db.insert(aboutContent).values({ content })
+    if (rows[0]) {
+      await db.update(aboutContent).set({ content, updatedAt: new Date() })
+    } else {
+      await db.insert(aboutContent).values({ content })
+    }
+
+    return NextResponse.json({ content })
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: 'Database error.' }, { status: 500 })
   }
-
-  return NextResponse.json({ content })
 }

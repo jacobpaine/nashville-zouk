@@ -52,7 +52,7 @@ export default function AdminAboutPage() {
           className={`px-4 py-2.5 rounded-xl font-medium text-sm transition-colors shadow-sm min-h-0 min-w-0 disabled:opacity-50 ${
             saved
               ? 'bg-green-500 text-white'
-              : 'bg-pink-600 hover:bg-pink-700 text-white'
+              : 'bg-pink-700 hover:bg-pink-800 text-white'
           }`}
         >
           {saving ? 'Saving…' : saved ? 'Saved!' : 'Save'}

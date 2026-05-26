@@ -6,10 +6,7 @@ export const metadata: Metadata = {
   robots: { index: false },
 }
 
-const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-function isDbConfigured() {
-  return !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-}
+import { isDbConfigured } from '@/lib/config'
 
 type Result = 'success' | 'already' | 'invalid' | 'dev'
 
@@ -76,7 +73,7 @@ export default async function UnsubscribePage({ searchParams }: Props) {
         <>
           <h2 className="text-xl font-bold text-gray-900 mb-2">Link not recognized</h2>
           <p className="text-gray-500 text-sm">
-            This unsubscribe link is invalid or has already been used.
+            This unsubscribe link was not found. You may have already unsubscribed, or the link may be expired.
           </p>
         </>
       )}

@@ -1,21 +1,31 @@
 'use server'
 
 import { randomUUID } from 'crypto'
+import { headers } from 'next/headers'
+import { isDbConfigured, isEmailConfigured } from '@/lib/config'
 
 export type SubscribeState = {
   success: boolean
   error?: string
 }
 
-const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
+// In-memory rate limit: 5 submissions per IP per hour.
+// Per-instance only — does not coordinate across Vercel serverless replicas,
+// but sufficient for a small community site.
+const ipAttempts = new Map<string, { count: number; resetAt: number }>()
 
-function isDbConfigured(): boolean {
-  return !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-}
-
-function isEmailConfigured(): boolean {
-  const key = process.env.RESEND_API_KEY
-  return !!key && !key.startsWith('re_your_api_key')
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now()
+  const WINDOW_MS = 60 * 60 * 1000
+  const MAX = 5
+  const entry = ipAttempts.get(ip)
+  if (!entry || now >= entry.resetAt) {
+    ipAttempts.set(ip, { count: 1, resetAt: now + WINDOW_MS })
+    return true
+  }
+  if (entry.count >= MAX) return false
+  entry.count++
+  return true
 }
 
 async function sendConfirmationEmail(
@@ -59,6 +69,13 @@ export async function subscribeAction(
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { success: false, error: 'Please enter a valid email address.' }
+  }
+
+  const headerStore = await headers()
+  const ip = headerStore.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  if (!checkRateLimit(ip)) {
+    // Return success to avoid leaking rate-limit info to scrapers
+    return { success: true }
   }
 
   if (!isDbConfigured()) {

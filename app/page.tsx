@@ -50,7 +50,7 @@ export default async function HomePage() {
                     </p>
                     <Link
                       href={`/events/${flyerEvent.slug}`}
-                      className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-semibold transition-colors shadow-lg min-h-0 min-w-0"
+                      className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-pink-700 hover:bg-pink-800 text-white rounded-xl font-semibold transition-colors shadow-lg min-h-0 min-w-0"
                     >
                       Event Details
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,7 +64,7 @@ export default async function HomePage() {
                     <p className="text-gray-400 mt-3 text-lg">Brazilian Zouk dance in Music City</p>
                     <Link
                       href="/events"
-                      className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-semibold transition-colors shadow-lg min-h-0 min-w-0"
+                      className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-pink-700 hover:bg-pink-800 text-white rounded-xl font-semibold transition-colors shadow-lg min-h-0 min-w-0"
                     >
                       See Events
                     </Link>
@@ -78,7 +78,7 @@ export default async function HomePage() {
               <p className="text-gray-400 mt-4 text-xl">Brazilian Zouk dance in Music City</p>
               <Link
                 href="/events"
-                className="inline-flex items-center gap-2 mt-8 px-8 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-semibold transition-colors shadow-lg min-h-0 min-w-0"
+                className="inline-flex items-center gap-2 mt-8 px-8 py-3 bg-pink-700 hover:bg-pink-800 text-white rounded-xl font-semibold transition-colors shadow-lg min-h-0 min-w-0"
               >
                 View Events
               </Link>

@@ -6,6 +6,8 @@ export function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Edge runtime cannot decrypt iron-session, so we only check cookie presence here.
+  // Full session validation happens in AdminAppLayout (server component) and requireAdmin() (API routes).
   const session = request.cookies.get('admin-session')
 
   if (!session) {

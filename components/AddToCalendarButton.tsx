@@ -30,7 +30,7 @@ export function AddToCalendarButton({ gcalUrl, icsContent, slug }: AddToCalendar
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-5 py-2.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-medium transition-colors shadow-sm min-h-0 min-w-0"
+        className="flex items-center gap-2 px-5 py-2.5 bg-pink-700 hover:bg-pink-800 text-white rounded-xl font-medium transition-colors shadow-sm min-h-0 min-w-0"
         aria-expanded={open}
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

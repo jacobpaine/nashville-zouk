@@ -6,8 +6,8 @@ export default async function AdminAppLayout({ children }: { children: React.Rea
   const session = await getSession()
   if (!session.adminId) redirect('/admin/login')
 
-  const isDev = !process.env.DATABASE_URL ||
-    process.env.DATABASE_URL === 'postgresql://user:password@host/dbname?sslmode=require'
+  const { isDbConfigured } = await import('@/lib/config')
+  const isDev = !isDbConfigured()
 
   return (
     <div className="min-h-screen bg-gray-50 flex">

@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/auth'
+import { isDbConfigured } from '@/lib/config'
 import { MOCK_INSTRUCTORS } from '@/lib/mock'
-
-const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-function isDbConfigured() {
-  return !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-}
 
 export async function GET() {
   try { await requireAdmin() } catch {
@@ -16,11 +12,16 @@ export async function GET() {
     return NextResponse.json(MOCK_INSTRUCTORS)
   }
 
-  const { db } = await import('@/lib/db')
-  const { instructors } = await import('@/lib/schema')
-  const { asc } = await import('drizzle-orm')
-  const rows = await db.select().from(instructors).orderBy(asc(instructors.displayOrder))
-  return NextResponse.json(rows)
+  try {
+    const { db } = await import('@/lib/db')
+    const { instructors } = await import('@/lib/schema')
+    const { asc } = await import('drizzle-orm')
+    const rows = await db.select().from(instructors).orderBy(asc(instructors.displayOrder))
+    return NextResponse.json(rows)
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: 'Database error.' }, { status: 500 })
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -36,12 +37,15 @@ export async function POST(request: NextRequest) {
   }
 
   if (!isDbConfigured()) {
-    return NextResponse.json({ id: crypto.randomUUID(), name, slug, bio, instagramHandle, displayOrder: displayOrder ?? 0, isActive: isActive ?? true }, { status: 201 })
+    return NextResponse.json(
+      { id: crypto.randomUUID(), name, slug, bio, instagramHandle, displayOrder: displayOrder ?? 0, isActive: isActive ?? true },
+      { status: 201 }
+    )
   }
 
-  const { db } = await import('@/lib/db')
-  const { instructors } = await import('@/lib/schema')
   try {
+    const { db } = await import('@/lib/db')
+    const { instructors } = await import('@/lib/schema')
     const rows = await db.insert(instructors).values({
       name: name.trim(),
       slug: slug.trim(),
@@ -56,6 +60,7 @@ export async function POST(request: NextRequest) {
     if (pg?.code === '23505') {
       return NextResponse.json({ error: 'Slug already in use.' }, { status: 409 })
     }
-    throw err
+    console.error(err)
+    return NextResponse.json({ error: 'Database error.' }, { status: 500 })
   }
 }

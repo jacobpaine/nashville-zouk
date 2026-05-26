@@ -5,10 +5,8 @@ import { DeleteButton } from '@/components/admin/DeleteButton'
 export const metadata: Metadata = { title: 'Campaigns | Admin' }
 
 async function getAdminCampaigns() {
-  const PLACEHOLDER_URL = 'postgresql://user:password@host/dbname?sslmode=require'
-  const isDbConfigured = !!process.env.DATABASE_URL && process.env.DATABASE_URL !== PLACEHOLDER_URL
-
-  if (!isDbConfigured) return []
+  const { isDbConfigured } = await import('@/lib/config')
+  if (!isDbConfigured()) return []
 
   const { db } = await import('@/lib/db')
   const { campaigns } = await import('@/lib/schema')
@@ -25,7 +23,7 @@ export default async function AdminCampaignsPage() {
         <h1 className="text-2xl font-bold text-gray-900">Campaigns</h1>
         <Link
           href="/admin/campaigns/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-medium text-sm transition-colors shadow-sm min-h-0 min-w-0"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-pink-700 hover:bg-pink-800 text-white rounded-xl font-medium text-sm transition-colors shadow-sm min-h-0 min-w-0"
         >
           + New Campaign
         </Link>
@@ -39,7 +37,7 @@ export default async function AdminCampaignsPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">
