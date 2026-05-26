@@ -41,11 +41,11 @@ export default async function AdminCampaignsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left px-4 py-3 text-gray-500 font-medium">Subject</th>
-                <th className="text-left px-4 py-3 text-gray-500 font-medium hidden md:table-cell">Status</th>
-                <th className="text-left px-4 py-3 text-gray-500 font-medium hidden lg:table-cell">Sent</th>
-                <th className="text-left px-4 py-3 text-gray-500 font-medium hidden lg:table-cell">Recipients</th>
-                <th className="px-4 py-3" />
+                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium">Subject</th>
+                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium hidden md:table-cell">Status</th>
+                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium hidden lg:table-cell">Sent</th>
+                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium hidden lg:table-cell">Recipients</th>
+                <th scope="col" className="px-4 py-3" />
               </tr>
             </thead>
             <tbody>

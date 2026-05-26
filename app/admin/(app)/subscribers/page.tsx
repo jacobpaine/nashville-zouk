@@ -67,10 +67,10 @@ export default function AdminSubscribersPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left px-4 py-3 text-gray-500 font-medium">Email</th>
-                <th className="text-left px-4 py-3 text-gray-500 font-medium hidden sm:table-cell">Name</th>
-                <th className="text-left px-4 py-3 text-gray-500 font-medium hidden md:table-cell">Subscribed</th>
-                <th className="text-left px-4 py-3 text-gray-500 font-medium">Status</th>
+                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium">Email</th>
+                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium hidden sm:table-cell">Name</th>
+                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium hidden md:table-cell">Subscribed</th>
+                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium">Status</th>
               </tr>
             </thead>
             <tbody>

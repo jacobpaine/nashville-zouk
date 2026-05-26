@@ -83,7 +83,7 @@ export default function AdminFlyersPage() {
                       <button
                         onClick={() => setCurrent(flyer.id)}
                         disabled={settingCurrent === flyer.id}
-                        className="text-xs px-2.5 py-1 bg-pink-50 hover:bg-pink-100 text-pink-700 rounded-lg font-medium transition-colors disabled:opacity-50 min-h-0 min-w-0"
+                        className="text-xs px-2.5 py-1 bg-pink-50 hover:bg-pink-100 text-pink-800 rounded-lg font-medium transition-colors disabled:opacity-50 min-h-0 min-w-0"
                       >
                         {settingCurrent === flyer.id ? 'Setting…' : 'Set Current'}
                       </button>

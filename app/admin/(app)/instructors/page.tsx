@@ -43,11 +43,11 @@ export default async function AdminInstructorsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left px-4 py-3 text-gray-500 font-medium">Instructor</th>
-                <th className="text-left px-4 py-3 text-gray-500 font-medium hidden sm:table-cell">Instagram</th>
-                <th className="text-left px-4 py-3 text-gray-500 font-medium hidden md:table-cell">Order</th>
-                <th className="text-left px-4 py-3 text-gray-500 font-medium hidden lg:table-cell">Status</th>
-                <th className="px-4 py-3" />
+                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium">Instructor</th>
+                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium hidden sm:table-cell">Instagram</th>
+                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium hidden md:table-cell">Order</th>
+                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium hidden lg:table-cell">Status</th>
+                <th scope="col" className="px-4 py-3" />
               </tr>
             </thead>
             <tbody>
