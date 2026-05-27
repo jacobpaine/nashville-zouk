@@ -35,13 +35,6 @@ export function EmailSignupForm() {
           autoComplete="email"
           className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 text-base bg-white min-h-0"
         />
-        <input
-          type="text"
-          name="firstName"
-          placeholder="First name (optional)"
-          autoComplete="given-name"
-          className="sm:w-44 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 text-base bg-white min-h-0"
-        />
         <button
           type="submit"
           disabled={pending}
