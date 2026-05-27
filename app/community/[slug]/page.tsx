@@ -66,7 +66,13 @@ export default async function CommunityMemberPage({ params }: Props) {
           <h1 className="text-3xl font-black text-gray-900">{member.name}</h1>
 
           {member.responsibilities && (
-            <p className="mt-1 text-sm font-medium text-pink-600">{member.responsibilities}</p>
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {member.responsibilities.split(',').map((r) => r.trim()).filter(Boolean).map((role) => (
+                <span key={role} className="text-xs px-2.5 py-1 rounded-full bg-pink-50 text-pink-700 font-medium">
+                  {role}
+                </span>
+              ))}
+            </div>
           )}
 
           {member.instagramHandle && (

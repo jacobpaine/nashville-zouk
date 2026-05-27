@@ -16,7 +16,7 @@ export async function Footer() {
 
           <nav className="flex flex-col sm:flex-row gap-4 sm:gap-8 text-sm" aria-label="Footer navigation">
             <div className="flex flex-col gap-2">
-              <p className="text-white font-medium text-xs uppercase tracking-wider">Community</p>
+              <p className="text-white font-medium text-xs uppercase tracking-wider">Links</p>
               <Link href="/events" className="hover:text-white transition-colors min-h-0 min-w-0">Events</Link>
               <Link href="/community" className="hover:text-white transition-colors min-h-0 min-w-0">Community</Link>
               <Link href="/about" className="hover:text-white transition-colors min-h-0 min-w-0">About</Link>

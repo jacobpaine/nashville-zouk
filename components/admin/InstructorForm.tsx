@@ -4,6 +4,19 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { slugify } from '@/lib/slugify'
 
+const ROLES = [
+  'Instructor',
+  'Organizer',
+  'DJ',
+  'Designer',
+  'Website',
+  'Photographer',
+  'Social Media',
+  'Videographer',
+  'Host',
+  'MC',
+]
+
 interface InstructorFormProps {
   initialData?: {
     id?: string
@@ -27,7 +40,14 @@ export function InstructorForm({ initialData }: InstructorFormProps) {
   const [slug, setSlug] = useState(initialData?.slug ?? '')
   const [slugManual, setSlugManual] = useState(!!initialData?.slug)
   const [bio, setBio] = useState(initialData?.bio ?? '')
-  const [responsibilities, setResponsibilities] = useState(initialData?.responsibilities ?? '')
+  const [selectedRoles, setSelectedRoles] = useState<Set<string>>(
+    () => new Set(
+      (initialData?.responsibilities ?? '')
+        .split(',')
+        .map((r) => r.trim())
+        .filter(Boolean)
+    )
+  )
   const [instagram, setInstagram] = useState(initialData?.instagramHandle ?? '')
   const [displayOrder, setDisplayOrder] = useState(String(initialData?.displayOrder ?? 0))
   const [isActive, setIsActive] = useState(initialData?.isActive ?? true)
@@ -40,6 +60,15 @@ export function InstructorForm({ initialData }: InstructorFormProps) {
   function handleNameChange(val: string) {
     setName(val)
     if (!slugManual) setSlug(slugify(val))
+  }
+
+  function toggleRole(role: string) {
+    setSelectedRoles((prev) => {
+      const next = new Set(prev)
+      if (next.has(role)) next.delete(role)
+      else next.add(role)
+      return next
+    })
   }
 
   async function handlePhotoUpload(file: File) {
@@ -70,11 +99,13 @@ export function InstructorForm({ initialData }: InstructorFormProps) {
     setSaving(true)
     setError('')
 
+    const rolesValue = Array.from(selectedRoles).join(', ') || null
+
     const payload = {
       name: name.trim(),
       slug: slug.trim(),
       bio: bio.trim() || null,
-      responsibilities: responsibilities.trim() || null,
+      responsibilities: rolesValue,
       instagramHandle: instagram.trim() || null,
       displayOrder: parseInt(displayOrder, 10) || 0,
       isActive,
@@ -177,17 +208,31 @@ export function InstructorForm({ initialData }: InstructorFormProps) {
         />
       </div>
 
-      {/* Responsibilities */}
+      {/* Roles */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Responsibilities</label>
-        <input
-          type="text"
-          value={responsibilities}
-          onChange={(e) => setResponsibilities(e.target.value)}
-          placeholder="e.g. Instructor, Organizer, DJ"
-          className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-        />
-        <p className="text-xs text-gray-400 mt-1">Shown on the community page and profile.</p>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Roles</label>
+        <div className="flex flex-wrap gap-2">
+          {ROLES.map((role) => {
+            const active = selectedRoles.has(role)
+            return (
+              <button
+                key={role}
+                type="button"
+                onClick={() => toggleRole(role)}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors min-h-0 min-w-0 ${
+                  active
+                    ? 'bg-pink-600 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {role}
+              </button>
+            )
+          })}
+        </div>
+        {selectedRoles.size > 0 && (
+          <p className="text-xs text-gray-400 mt-2">{Array.from(selectedRoles).join(', ')}</p>
+        )}
       </div>
 
       {/* Instagram */}

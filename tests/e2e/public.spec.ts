@@ -29,15 +29,15 @@ test.describe('Event detail', () => {
   })
 })
 
-test.describe('Instructors', () => {
-  test('instructor grid loads', async ({ page }) => {
-    await page.goto('/instructors')
-    await expect(page.locator('h1')).toContainText(/instructor/i)
+test.describe('Community', () => {
+  test('community grid loads', async ({ page }) => {
+    await page.goto('/community')
+    await expect(page.locator('h1')).toContainText(/community/i)
   })
 
-  test('instructor profile page loads', async ({ page }) => {
-    await page.goto('/instructors')
-    const firstCard = page.locator('a[href^="/instructors/"]').first()
+  test('community member profile page loads', async ({ page }) => {
+    await page.goto('/community')
+    const firstCard = page.locator('a[href^="/community/"]').first()
     await firstCard.click()
     await expect(page.locator('h1')).toBeVisible()
   })

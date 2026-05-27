@@ -34,7 +34,13 @@ export function InstructorCard({ instructor }: InstructorCardProps) {
       </p>
 
       {instructor.responsibilities && (
-        <p className="text-xs text-pink-600 font-medium mt-0.5">{instructor.responsibilities}</p>
+        <div className="flex flex-wrap justify-center gap-1 mt-1.5">
+          {instructor.responsibilities.split(',').map((r) => r.trim()).filter(Boolean).map((role) => (
+            <span key={role} className="text-xs px-2 py-0.5 rounded-full bg-pink-50 text-pink-700 font-medium">
+              {role}
+            </span>
+          ))}
+        </div>
       )}
 
       {instructor.instagramHandle && (
