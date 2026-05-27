@@ -35,14 +35,14 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
   const { id } = await params
   const body = await request.json()
-  const { name, slug, bio, instagramHandle, displayOrder, isActive } = body
+  const { name, slug, bio, responsibilities, instagramHandle, displayOrder, isActive } = body
 
   if (!name?.trim() || !slug?.trim()) {
     return NextResponse.json({ error: 'Name and slug are required.' }, { status: 400 })
   }
 
   if (!isDbConfigured()) {
-    return NextResponse.json({ id, name, slug, bio, instagramHandle, displayOrder, isActive })
+    return NextResponse.json({ id, name, slug, bio, responsibilities, instagramHandle, displayOrder, isActive })
   }
 
   try {
@@ -55,6 +55,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
         name: name.trim(),
         slug: slug.trim(),
         bio: bio || null,
+        responsibilities: responsibilities || null,
         instagramHandle: instagramHandle || null,
         displayOrder: displayOrder ?? 0,
         isActive: isActive ?? true,

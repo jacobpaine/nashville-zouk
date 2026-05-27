@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { name, slug, bio, instagramHandle, displayOrder, isActive } = body
+  const { name, slug, bio, responsibilities, instagramHandle, displayOrder, isActive } = body
 
   if (!name?.trim() || !slug?.trim()) {
     return NextResponse.json({ error: 'Name and slug are required.' }, { status: 400 })
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
   if (!isDbConfigured()) {
     return NextResponse.json(
-      { id: crypto.randomUUID(), name, slug, bio, instagramHandle, displayOrder: displayOrder ?? 0, isActive: isActive ?? true },
+      { id: crypto.randomUUID(), name, slug, bio, responsibilities, instagramHandle, displayOrder: displayOrder ?? 0, isActive: isActive ?? true },
       { status: 201 }
     )
   }
@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
       name: name.trim(),
       slug: slug.trim(),
       bio: bio || null,
+      responsibilities: responsibilities || null,
       instagramHandle: instagramHandle || null,
       displayOrder: displayOrder ?? 0,
       isActive: isActive ?? true,

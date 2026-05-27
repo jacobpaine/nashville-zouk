@@ -11,6 +11,7 @@ interface InstructorFormProps {
     slug?: string
     bio?: string | null
     instagramHandle?: string | null
+    responsibilities?: string | null
     displayOrder?: number
     isActive?: boolean
     photoUrl?: string | null
@@ -26,6 +27,7 @@ export function InstructorForm({ initialData }: InstructorFormProps) {
   const [slug, setSlug] = useState(initialData?.slug ?? '')
   const [slugManual, setSlugManual] = useState(!!initialData?.slug)
   const [bio, setBio] = useState(initialData?.bio ?? '')
+  const [responsibilities, setResponsibilities] = useState(initialData?.responsibilities ?? '')
   const [instagram, setInstagram] = useState(initialData?.instagramHandle ?? '')
   const [displayOrder, setDisplayOrder] = useState(String(initialData?.displayOrder ?? 0))
   const [isActive, setIsActive] = useState(initialData?.isActive ?? true)
@@ -72,6 +74,7 @@ export function InstructorForm({ initialData }: InstructorFormProps) {
       name: name.trim(),
       slug: slug.trim(),
       bio: bio.trim() || null,
+      responsibilities: responsibilities.trim() || null,
       instagramHandle: instagram.trim() || null,
       displayOrder: parseInt(displayOrder, 10) || 0,
       isActive,
@@ -132,7 +135,7 @@ export function InstructorForm({ initialData }: InstructorFormProps) {
             </button>
           </>
         ) : (
-          <p className="text-xs text-gray-400">Save the instructor first, then upload a photo.</p>
+          <p className="text-xs text-gray-400">Save the member first, then upload a photo.</p>
         )}
       </div>
 
@@ -172,6 +175,19 @@ export function InstructorForm({ initialData }: InstructorFormProps) {
           placeholder="Use blank lines to separate paragraphs"
           className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-y"
         />
+      </div>
+
+      {/* Responsibilities */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Responsibilities</label>
+        <input
+          type="text"
+          value={responsibilities}
+          onChange={(e) => setResponsibilities(e.target.value)}
+          placeholder="e.g. Instructor, Organizer, DJ"
+          className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+        />
+        <p className="text-xs text-gray-400 mt-1">Shown on the community page and profile.</p>
       </div>
 
       {/* Instagram */}
@@ -229,7 +245,7 @@ export function InstructorForm({ initialData }: InstructorFormProps) {
           disabled={saving}
           className="px-5 py-2.5 bg-pink-700 hover:bg-pink-800 disabled:opacity-50 text-white rounded-xl font-medium text-sm transition-colors min-h-0 min-w-0"
         >
-          {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Create instructor'}
+          {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Create member'}
         </button>
         <button
           type="button"

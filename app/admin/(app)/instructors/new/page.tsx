@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { InstructorForm } from '@/components/admin/InstructorForm'
 
-export const metadata: Metadata = { title: 'New Instructor | Admin' }
+export const metadata: Metadata = { title: 'New Member | Admin' }
 
 export default function NewInstructorPage() {
   return (
@@ -12,9 +12,9 @@ export default function NewInstructorPage() {
           href="/admin/instructors"
           className="text-sm text-gray-500 hover:text-gray-900 transition-colors inline-flex items-center gap-1 mb-4 min-h-0 min-w-0"
         >
-          ← Back to Instructors
+          ← Back to Community
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">New Instructor</h1>
+        <h1 className="text-2xl font-bold text-gray-900">New Member</h1>
       </div>
       <InstructorForm />
     </div>

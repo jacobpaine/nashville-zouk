@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { DeleteButton } from '@/components/admin/DeleteButton'
 import { MOCK_INSTRUCTORS } from '@/lib/mock'
 
-export const metadata: Metadata = { title: 'Instructors | Admin' }
+export const metadata: Metadata = { title: 'Community | Admin' }
 
 async function getAdminInstructors() {
   const { isDbConfigured } = await import('@/lib/config')
@@ -22,20 +22,20 @@ export default async function AdminInstructorsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Instructors</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Community</h1>
         <Link
           href="/admin/instructors/new"
           className="inline-flex items-center gap-2 px-4 py-2.5 bg-pink-700 hover:bg-pink-800 text-white rounded-xl font-medium text-sm transition-colors shadow-sm min-h-0 min-w-0"
         >
-          + New Instructor
+          + New Member
         </Link>
       </div>
 
       {instructors.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-xl border border-gray-100">
-          <p className="text-gray-500">No instructors yet.</p>
+          <p className="text-gray-500">No community members yet.</p>
           <Link href="/admin/instructors/new" className="text-pink-600 font-medium mt-2 inline-block min-h-0 min-w-0">
-            Add your first instructor →
+            Add your first member →
           </Link>
         </div>
       ) : (
@@ -43,7 +43,7 @@ export default async function AdminInstructorsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">
-                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium">Instructor</th>
+                <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium">Member</th>
                 <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium hidden sm:table-cell">Instagram</th>
                 <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium hidden md:table-cell">Order</th>
                 <th scope="col" className="text-left px-4 py-3 text-gray-500 font-medium hidden lg:table-cell">Status</th>
@@ -86,7 +86,7 @@ export default async function AdminInstructorsPage() {
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Link
-                        href={`/instructors/${instructor.slug}`}
+                        href={`/community/${instructor.slug}`}
                         target="_blank"
                         className="text-xs text-gray-400 hover:text-gray-700 min-h-0 min-w-0"
                       >

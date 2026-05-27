@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: base, lastModified: now, changeFrequency: 'weekly', priority: 1 },
     { url: `${base}/events`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
-    { url: `${base}/instructors`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${base}/community`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/flyers`, lastModified: now, changeFrequency: 'weekly', priority: 0.5 },
   ]
@@ -26,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   const instructorRoutes: MetadataRoute.Sitemap = instructors.map((instructor) => ({
-    url: `${base}/instructors/${instructor.slug}`,
+    url: `${base}/community/${instructor.slug}`,
     lastModified: new Date(instructor.updatedAt),
     changeFrequency: 'monthly',
     priority: 0.6,

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { InstructorForm } from '@/components/admin/InstructorForm'
 
-export const metadata: Metadata = { title: 'Edit Instructor | Admin' }
+export const metadata: Metadata = { title: 'Edit Member | Admin' }
 
 interface Props {
   params: Promise<{ id: string }>
@@ -35,9 +35,9 @@ export default async function EditInstructorPage({ params }: Props) {
           href="/admin/instructors"
           className="text-sm text-gray-500 hover:text-gray-900 transition-colors inline-flex items-center gap-1 mb-4 min-h-0 min-w-0"
         >
-          ← Back to Instructors
+          ← Back to Community
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Edit Instructor</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Edit Member</h1>
       </div>
       <InstructorForm
         initialData={{
@@ -45,6 +45,7 @@ export default async function EditInstructorPage({ params }: Props) {
           name: instructor.name,
           slug: instructor.slug,
           bio: instructor.bio,
+          responsibilities: instructor.responsibilities,
           instagramHandle: instructor.instagramHandle,
           displayOrder: instructor.displayOrder,
           isActive: instructor.isActive,

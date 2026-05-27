@@ -18,7 +18,7 @@ export async function Footer() {
             <div className="flex flex-col gap-2">
               <p className="text-white font-medium text-xs uppercase tracking-wider">Community</p>
               <Link href="/events" className="hover:text-white transition-colors min-h-0 min-w-0">Events</Link>
-              <Link href="/instructors" className="hover:text-white transition-colors min-h-0 min-w-0">Instructors</Link>
+              <Link href="/community" className="hover:text-white transition-colors min-h-0 min-w-0">Community</Link>
               <Link href="/about" className="hover:text-white transition-colors min-h-0 min-w-0">About</Link>
             </div>
             {isAdmin && (

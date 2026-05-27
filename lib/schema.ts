@@ -48,6 +48,7 @@ export const instructors = pgTable('instructors', {
   photoUrl: text('photo_url'),
   photoKey: text('photo_key'),
   instagramHandle: text('instagram_handle'),
+  responsibilities: text('responsibilities'),
   displayOrder: integer('display_order').notNull().default(0),
   isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),

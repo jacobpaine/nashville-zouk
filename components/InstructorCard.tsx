@@ -9,7 +9,7 @@ interface InstructorCardProps {
 export function InstructorCard({ instructor }: InstructorCardProps) {
   return (
     <Link
-      href={`/instructors/${instructor.slug}`}
+      href={`/community/${instructor.slug}`}
       className="group flex flex-col items-center text-center p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-pink-100 transition-all min-h-0 min-w-0"
     >
       <div className="relative w-28 h-28 rounded-full overflow-hidden bg-gray-100 mb-4 ring-4 ring-white shadow-md">
@@ -32,6 +32,10 @@ export function InstructorCard({ instructor }: InstructorCardProps) {
       <p className="font-semibold text-gray-900 group-hover:text-pink-600 transition-colors">
         {instructor.name}
       </p>
+
+      {instructor.responsibilities && (
+        <p className="text-xs text-pink-600 font-medium mt-0.5">{instructor.responsibilities}</p>
+      )}
 
       {instructor.instagramHandle && (
         <p className="text-sm text-gray-400 mt-1">@{instructor.instagramHandle}</p>
