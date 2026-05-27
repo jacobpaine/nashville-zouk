@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import type { Metadata } from 'next'
 import { EventCard } from '@/components/EventCard'
 import { getAllEvents } from '@/lib/queries'

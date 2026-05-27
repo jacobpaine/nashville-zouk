@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import type { Metadata } from 'next'
 import { InstructorCard } from '@/components/InstructorCard'
 import { getActiveInstructors } from '@/lib/queries'
