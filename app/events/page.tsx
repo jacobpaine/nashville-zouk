@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import type { Metadata } from 'next'
 import { EventCard } from '@/components/EventCard'
-import { getAllEvents } from '@/lib/queries'
+import { getUpcomingEvents, getPastEvents } from '@/lib/queries'
 
 export const metadata: Metadata = {
   title: 'Events',
@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 }
 
 export default async function EventsPage() {
-  const events = await getAllEvents()
-  const now = new Date()
-  const upcoming = events.filter((e) => new Date(e.startDatetime) >= now)
-  const past = events.filter((e) => new Date(e.startDatetime) < now)
+  const [upcoming, past] = await Promise.all([
+    getUpcomingEvents(50),
+    getPastEvents(20),
+  ])
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">

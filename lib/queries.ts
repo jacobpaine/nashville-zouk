@@ -1,4 +1,4 @@
-import { eq, gte, and, asc, desc } from 'drizzle-orm'
+import { eq, gte, lt, and, asc, desc } from 'drizzle-orm'
 import type { Event, Instructor } from './schema'
 import { MOCK_EVENTS, MOCK_FLYER, MOCK_FLYERS, MOCK_INSTRUCTORS } from './mock'
 import { isDbConfigured } from './config'
@@ -47,6 +47,24 @@ export async function getAllEvents(): Promise<Event[]> {
     .from(events)
     .where(eq(events.isPublished, true))
     .orderBy(desc(events.startDatetime))
+}
+
+export async function getPastEvents(limit = 20): Promise<Event[]> {
+  if (!isDbConfigured()) {
+    const now = new Date()
+    return [...MOCK_EVENTS]
+      .filter((e) => new Date(e.startDatetime) < now)
+      .sort((a, b) => new Date(b.startDatetime).getTime() - new Date(a.startDatetime).getTime())
+      .slice(0, limit)
+  }
+  const { db } = await import('./db')
+  const { events } = await import('./schema')
+  return db
+    .select()
+    .from(events)
+    .where(and(eq(events.isPublished, true), lt(events.startDatetime, new Date())))
+    .orderBy(desc(events.startDatetime))
+    .limit(limit)
 }
 
 export async function getEventBySlug(slug: string): Promise<Event | null> {
