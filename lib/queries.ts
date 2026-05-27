@@ -161,13 +161,27 @@ export async function getInstructorBySlug(slug: string): Promise<Instructor | nu
 
 export async function getAboutContent(): Promise<string> {
   if (!isDbConfigured()) {
-    return `## Welcome to Nashville Zouk
+    return `## What is Brazilian Zouk?
 
-Brazilian Zouk is a partner dance that originated in Brazil, characterized by its fluid movements, connection between partners, and musicality.
+Brazilian Zouk is a partner dance that originated in Brazil in the 1980s, evolving from the Caribbean dance Lambada. It's known for its fluid, wave-like movements, deep connection between partners, and emphasis on musicality. The dance has grown into a worldwide community with its own festivals, competitions, and social scene.
 
-Nashville Zouk brings this beautiful dance to Music City. We host regular social dances, workshops, and classes for all levels — from complete beginners to experienced dancers.
+## Nashville Zouk
 
-Whether you're brand new to partner dancing or looking to expand your repertoire, you're welcome here.`
+We're a growing community of dancers in Music City dedicated to bringing Brazilian Zouk to Nashville. Whether you've never tried partner dancing before or you're an experienced dancer looking to expand your repertoire — you belong here.
+
+We host regular **social dances**, **workshops**, and **weekly classes** throughout the year. Our events are welcoming, low-pressure, and a lot of fun.
+
+## What to Expect
+
+At a social dance, you'll find open-floor dancing with a mix of skill levels. Beginners are always welcome, and more experienced dancers love sharing the dance. No partner required — just show up.
+
+Workshops and classes are hands-on and taught by experienced instructors. We focus on technique, connection, and musicality so you can feel confident on the floor.
+
+## Getting Started
+
+The best way to start is to come to a beginner class or a social dance. Comfortable shoes with smooth soles work great. No partner needed — roles rotate so everyone dances with everyone.
+
+Follow us on Instagram or sign up for our mailing list below to stay up to date on events.`
   }
   const { db } = await import('./db')
   const { aboutContent } = await import('./schema')

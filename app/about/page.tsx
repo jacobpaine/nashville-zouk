@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import type { Metadata } from 'next'
 import ReactMarkdown from 'react-markdown'
 import { getAboutContent } from '@/lib/queries'
