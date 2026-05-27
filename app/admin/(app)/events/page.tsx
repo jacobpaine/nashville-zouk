@@ -69,11 +69,20 @@ export default async function AdminEventsPage() {
                     <span className="text-xs capitalize text-gray-600">{event.eventType}</span>
                   </td>
                   <td className="px-4 py-3 hidden lg:table-cell">
-                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                      event.isPublished ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'
-                    }`}>
-                      {event.isPublished ? 'Published' : 'Draft'}
-                    </span>
+                    {(() => {
+                      const isArchived = new Date(event.startDatetime) < new Date()
+                      return (
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                          isArchived
+                            ? 'bg-gray-100 text-gray-400'
+                            : event.isPublished
+                            ? 'bg-green-50 text-green-700'
+                            : 'bg-gray-100 text-gray-500'
+                        }`}>
+                          {isArchived ? 'Archived' : event.isPublished ? 'Published' : 'Draft'}
+                        </span>
+                      )
+                    })()}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
