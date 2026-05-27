@@ -3,15 +3,6 @@ import type { Event, Instructor } from './schema'
 import { MOCK_EVENTS, MOCK_FLYER, MOCK_FLYERS, MOCK_INSTRUCTORS } from './mock'
 import { isDbConfigured } from './config'
 
-function getDb() {
-  const { db } = require('./db') as { db: import('drizzle-orm/neon-http').NeonHttpDatabase<typeof import('./schema')> }
-  return db
-}
-
-function getSchema() {
-  return require('./schema') as typeof import('./schema')
-}
-
 export type FlyerWithSlug = {
   id: string
   title: string
@@ -33,8 +24,8 @@ export async function getUpcomingEvents(limit = 10): Promise<Event[]> {
       .sort((a, b) => new Date(a.startDatetime).getTime() - new Date(b.startDatetime).getTime())
       .slice(0, limit)
   }
-  const db = getDb()
-  const { events } = getSchema()
+  const { db } = await import('./db')
+  const { events } = await import('./schema')
   return db
     .select()
     .from(events)
@@ -45,12 +36,12 @@ export async function getUpcomingEvents(limit = 10): Promise<Event[]> {
 
 export async function getAllEvents(): Promise<Event[]> {
   if (!isDbConfigured()) {
-    return MOCK_EVENTS.sort(
+    return [...MOCK_EVENTS].sort(
       (a, b) => new Date(b.startDatetime).getTime() - new Date(a.startDatetime).getTime()
     )
   }
-  const db = getDb()
-  const { events } = getSchema()
+  const { db } = await import('./db')
+  const { events } = await import('./schema')
   return db
     .select()
     .from(events)
@@ -62,8 +53,8 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
   if (!isDbConfigured()) {
     return MOCK_EVENTS.find((e) => e.slug === slug) ?? null
   }
-  const db = getDb()
-  const { events } = getSchema()
+  const { db } = await import('./db')
+  const { events } = await import('./schema')
   const rows = await db
     .select()
     .from(events)
@@ -76,8 +67,8 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
 
 export async function getCurrentFlyer() {
   if (!isDbConfigured()) return MOCK_FLYER
-  const db = getDb()
-  const { flyers } = getSchema()
+  const { db } = await import('./db')
+  const { flyers } = await import('./schema')
   const rows = await db.select().from(flyers).where(eq(flyers.isCurrent, true)).limit(1)
   return rows[0] ?? null
 }
@@ -86,8 +77,8 @@ export async function getFlyerForEvent(flyerId: string) {
   if (!isDbConfigured()) {
     return MOCK_FLYERS.find((f) => f.id === flyerId) ?? null
   }
-  const db = getDb()
-  const { flyers } = getSchema()
+  const { db } = await import('./db')
+  const { flyers } = await import('./schema')
   const rows = await db.select().from(flyers).where(eq(flyers.id, flyerId)).limit(1)
   return rows[0] ?? null
 }
@@ -99,8 +90,8 @@ export async function getAllFlyers(): Promise<FlyerWithSlug[]> {
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .map((f) => ({ ...f, eventSlug: f.eventId ? (eventsByid[f.eventId] ?? null) : null }))
   }
-  const db = getDb()
-  const { flyers, events } = getSchema()
+  const { db } = await import('./db')
+  const { flyers, events } = await import('./schema')
   return db
     .select({
       id: flyers.id,
@@ -122,8 +113,8 @@ export async function getAllFlyers(): Promise<FlyerWithSlug[]> {
 
 export async function getActiveInstructors(): Promise<Instructor[]> {
   if (!isDbConfigured()) return MOCK_INSTRUCTORS
-  const db = getDb()
-  const { instructors } = getSchema()
+  const { db } = await import('./db')
+  const { instructors } = await import('./schema')
   return db
     .select()
     .from(instructors)
@@ -135,8 +126,8 @@ export async function getInstructorBySlug(slug: string): Promise<Instructor | nu
   if (!isDbConfigured()) {
     return MOCK_INSTRUCTORS.find((i) => i.slug === slug) ?? null
   }
-  const db = getDb()
-  const { instructors } = getSchema()
+  const { db } = await import('./db')
+  const { instructors } = await import('./schema')
   const rows = await db.select().from(instructors).where(eq(instructors.slug, slug)).limit(1)
   return rows[0] ?? null
 }
@@ -153,8 +144,8 @@ Nashville Zouk brings this beautiful dance to Music City. We host regular social
 
 Whether you're brand new to partner dancing or looking to expand your repertoire, you're welcome here.`
   }
-  const db = getDb()
-  const { aboutContent } = getSchema()
+  const { db } = await import('./db')
+  const { aboutContent } = await import('./schema')
   const rows = await db.select().from(aboutContent).limit(1)
   return rows[0]?.content ?? ''
 }
