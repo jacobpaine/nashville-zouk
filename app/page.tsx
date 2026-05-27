@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { FlyerCard } from '@/components/FlyerCard'
 import { EventCard } from '@/components/EventCard'
 import { EmailSignupForm } from '@/components/EmailSignupForm'
-import { getCurrentFlyer, getUpcomingEvents } from '@/lib/queries'
+import { getCurrentFlyer, getUpcomingEvents, getFlyerForEvent } from '@/lib/queries'
 
 export default async function HomePage() {
   const [currentFlyer, upcomingEvents] = await Promise.all([
@@ -12,66 +12,59 @@ export default async function HomePage() {
     getUpcomingEvents(5),
   ])
 
-  const flyerEvent = upcomingEvents.find((e) => e.id === currentFlyer?.eventId)
+  // Always feature the nearest upcoming event, not whichever event the current flyer happens to link to
+  const nextEvent = upcomingEvents[0] ?? null
+
+  // Use the next event's own flyer if it has one, otherwise fall back to the admin-set current flyer
+  const heroFlyer = nextEvent?.flyerId
+    ? ((await getFlyerForEvent(nextEvent.flyerId)) ?? currentFlyer)
+    : currentFlyer
 
   return (
     <>
       {/* Hero */}
       <section className="bg-gray-950 py-12 px-4">
         <div className="max-w-5xl mx-auto">
-          {currentFlyer ? (
+          {nextEvent ? (
             <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-12">
-              <div className="w-full max-w-xs mx-auto md:mx-0 md:w-80 flex-shrink-0">
-                <FlyerCard flyer={currentFlyer} eventSlug={flyerEvent?.slug} priority />
-              </div>
+              {heroFlyer && (
+                <div className="w-full max-w-xs mx-auto md:mx-0 md:w-80 flex-shrink-0">
+                  <FlyerCard flyer={heroFlyer} eventSlug={nextEvent.slug} priority />
+                </div>
+              )}
               <div className="text-center md:text-left">
-                {flyerEvent ? (
-                  <>
-                    <p className="text-pink-400 text-sm font-semibold uppercase tracking-widest mb-2">
-                      Next Event
-                    </p>
-                    <h1 className="text-3xl md:text-4xl font-black text-white leading-tight">
-                      {flyerEvent.title}
-                    </h1>
-                    <p className="text-gray-400 mt-3 text-lg">
-                      {new Date(flyerEvent.startDatetime).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        month: 'long',
-                        day: 'numeric',
-                        timeZone: 'America/Chicago',
-                      })}
-                    </p>
-                    <p className="text-gray-500 mt-1">
-                      {new Date(flyerEvent.startDatetime).toLocaleTimeString('en-US', {
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        hour12: true,
-                        timeZone: 'America/Chicago',
-                      })}{' '}
-                      · {flyerEvent.locationName}
-                    </p>
-                    <Link
-                      href={`/events/${flyerEvent.slug}`}
-                      className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-pink-700 hover:bg-pink-800 text-white rounded-xl font-semibold transition-colors shadow-lg min-h-0 min-w-0"
-                    >
-                      Event Details
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <h1 className="text-3xl md:text-4xl font-black text-white">Nashville Zouk</h1>
-                    <p className="text-gray-400 mt-3 text-lg">Brazilian Zouk dance in Music City</p>
-                    <Link
-                      href="/events"
-                      className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-pink-700 hover:bg-pink-800 text-white rounded-xl font-semibold transition-colors shadow-lg min-h-0 min-w-0"
-                    >
-                      See Events
-                    </Link>
-                  </>
-                )}
+                <p className="text-pink-400 text-sm font-semibold uppercase tracking-widest mb-2">
+                  Next Event
+                </p>
+                <h1 className="text-3xl md:text-4xl font-black text-white leading-tight">
+                  {nextEvent.title}
+                </h1>
+                <p className="text-gray-400 mt-3 text-lg">
+                  {new Date(nextEvent.startDatetime).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    timeZone: 'America/Chicago',
+                  })}
+                </p>
+                <p className="text-gray-500 mt-1">
+                  {new Date(nextEvent.startDatetime).toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                    timeZone: 'America/Chicago',
+                  })}{' '}
+                  · {nextEvent.locationName}
+                </p>
+                <Link
+                  href={`/events/${nextEvent.slug}`}
+                  className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-pink-700 hover:bg-pink-800 text-white rounded-xl font-semibold transition-colors shadow-lg min-h-0 min-w-0"
+                >
+                  Event Details
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
               </div>
             </div>
           ) : (
