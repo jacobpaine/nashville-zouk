@@ -5,6 +5,7 @@ type AnalyticsEvent =
   | { name: 'flyer_archive_view'; data?: Record<string, never> }
   | { name: 'unsubscribe_complete'; data?: Record<string, never> }
   | { name: 'instructor_profile_view'; data: { slug: string } }
+  | { name: 'community_member_view'; data: { slug: string } }
 
 export function trackEvent(event: AnalyticsEvent) {
   if (typeof window === 'undefined') return
