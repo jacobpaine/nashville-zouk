@@ -86,9 +86,16 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
 export async function getCurrentFlyer() {
   if (!isDbConfigured()) return MOCK_FLYER
   const { db } = await import('./db')
-  const { flyers } = await import('./schema')
-  const rows = await db.select().from(flyers).where(eq(flyers.isCurrent, true)).limit(1)
-  return rows[0] ?? null
+  const { flyers, events } = await import('./schema')
+  // Return the flyer for the soonest upcoming published event that has one
+  const rows = await db
+    .select({ flyer: flyers })
+    .from(events)
+    .innerJoin(flyers, eq(events.flyerId, flyers.id))
+    .where(and(eq(events.isPublished, true), gte(events.startDatetime, new Date())))
+    .orderBy(asc(events.startDatetime))
+    .limit(1)
+  return rows[0]?.flyer ?? null
 }
 
 export async function getFlyerForEvent(flyerId: string) {

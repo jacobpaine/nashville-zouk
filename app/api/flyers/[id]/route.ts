@@ -13,28 +13,22 @@ export async function PUT(request: NextRequest, { params }: Params) {
   const body = await request.json()
 
   // Explicit allowlist — never spread the full request body into a DB update
-  const { isCurrent, eventId, title } = body as {
-    isCurrent?: boolean
+  const { eventId, title } = body as {
     eventId?: string | null
     title?: string
   }
 
   if (!isDbConfigured()) {
-    return NextResponse.json({ id, isCurrent, eventId, title, message: 'dev-mode: not persisted' })
+    return NextResponse.json({ id, eventId, title, message: 'dev-mode: not persisted' })
   }
 
   try {
     const { db } = await import('@/lib/db')
     const { flyers } = await import('@/lib/schema')
-    const { eq, ne } = await import('drizzle-orm')
-
-    if (isCurrent) {
-      await db.update(flyers).set({ isCurrent: false }).where(ne(flyers.id, id))
-    }
+    const { eq } = await import('drizzle-orm')
 
     const rows = await db.update(flyers)
       .set({
-        isCurrent: typeof isCurrent === 'boolean' ? isCurrent : undefined,
         eventId: 'eventId' in body ? (eventId ?? null) : undefined,
         title: typeof title === 'string' && title.trim() ? title.trim() : undefined,
         updatedAt: new Date(),

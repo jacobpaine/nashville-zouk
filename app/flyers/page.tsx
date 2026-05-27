@@ -44,22 +44,9 @@ export default async function FlyersPage() {
                   />
                 )}
 
-                {flyer.isCurrent && (
-                  <div className="absolute top-2 left-2">
-                    <span className="bg-pink-700 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
-                      Current
-                    </span>
-                  </div>
-                )}
               </div>
 
               <p className="mt-2 text-sm font-medium text-gray-700 truncate">{flyer.title}</p>
-              <p className="text-xs text-gray-400">
-                {new Date(flyer.createdAt).toLocaleDateString('en-US', {
-                  month: 'long',
-                  year: 'numeric',
-                })}
-              </p>
             </div>
           ))}
         </div>
