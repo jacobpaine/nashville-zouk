@@ -1,6 +1,10 @@
 import Link from 'next/link'
+import { getSession } from '@/lib/auth'
 
-export function Footer() {
+export async function Footer() {
+  const session = await getSession()
+  const isAdmin = Boolean(session.adminId)
+
   return (
     <footer className="mt-auto bg-gray-950 text-gray-400">
       <div className="max-w-5xl mx-auto px-4 py-12">
@@ -17,10 +21,12 @@ export function Footer() {
               <Link href="/instructors" className="hover:text-white transition-colors min-h-0 min-w-0">Instructors</Link>
               <Link href="/about" className="hover:text-white transition-colors min-h-0 min-w-0">About</Link>
             </div>
-            <div className="flex flex-col gap-2">
-              <p className="text-white font-medium text-xs uppercase tracking-wider">Archive</p>
-              <Link href="/flyers" className="hover:text-white transition-colors min-h-0 min-w-0">Flyer Archive</Link>
-            </div>
+            {isAdmin && (
+              <div className="flex flex-col gap-2">
+                <p className="text-white font-medium text-xs uppercase tracking-wider">Archive</p>
+                <Link href="/flyers" className="hover:text-white transition-colors min-h-0 min-w-0">Flyer Archive</Link>
+              </div>
+            )}
           </nav>
         </div>
 

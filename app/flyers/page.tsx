@@ -3,8 +3,10 @@ export const dynamic = 'force-dynamic'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { getAllFlyers } from '@/lib/queries'
 import { TrackPageView } from '@/components/TrackPageView'
+import { getSession } from '@/lib/auth'
 
 export const metadata: Metadata = {
   title: 'Flyer Archive',
@@ -12,6 +14,9 @@ export const metadata: Metadata = {
 }
 
 export default async function FlyersPage() {
+  const session = await getSession()
+  if (!session.adminId) redirect('/admin/login')
+
   const flyers = await getAllFlyers()
 
   return (
