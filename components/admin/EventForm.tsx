@@ -56,6 +56,7 @@ export function EventForm({ initialData, availableFlyers = [] }: EventFormProps)
   const [locationName, setLocationName] = useState(initialData?.locationName ?? '')
   const [locationAddress, setLocationAddress] = useState(initialData?.locationAddress ?? '')
   const [locationUrl, setLocationUrl] = useState(initialData?.locationUrl ?? '')
+  const [locationUrlManual, setLocationUrlManual] = useState(!!initialData?.locationUrl)
   const [eventType, setEventType] = useState<'social' | 'workshop' | 'class'>(
     initialData?.eventType ?? 'social'
   )
@@ -71,6 +72,13 @@ export function EventForm({ initialData, availableFlyers = [] }: EventFormProps)
       setSlug(slugify(title))
     }
   }, [title, slugTouched])
+
+  // Auto-generate Maps URL from address (unless admin manually set it)
+  useEffect(() => {
+    if (locationUrlManual) return
+    const query = [locationName, locationAddress].filter(Boolean).join(', ')
+    setLocationUrl(query ? `https://maps.google.com/?q=${encodeURIComponent(query)}` : '')
+  }, [locationName, locationAddress, locationUrlManual])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -226,17 +234,43 @@ export function EventForm({ initialData, availableFlyers = [] }: EventFormProps)
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="locationUrl">
-            Map URL
-          </label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-sm font-medium text-gray-700" htmlFor="locationUrl">
+              Map URL
+            </label>
+            <div className="flex items-center gap-2">
+              {locationUrlManual && (
+                <button
+                  type="button"
+                  onClick={() => { setLocationUrlManual(false) }}
+                  className="text-xs text-gray-400 hover:text-gray-600 min-h-0 min-w-0"
+                >
+                  Reset to auto
+                </button>
+              )}
+              {locationUrl && (
+                <a
+                  href={locationUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-pink-600 hover:text-pink-700 min-h-0 min-w-0"
+                >
+                  Open in Maps ↗
+                </a>
+              )}
+            </div>
+          </div>
           <input
             id="locationUrl"
             type="url"
             value={locationUrl}
-            onChange={(e) => setLocationUrl(e.target.value)}
-            placeholder="https://maps.google.com/…"
+            onChange={(e) => { setLocationUrl(e.target.value); setLocationUrlManual(true) }}
+            placeholder="Auto-generated from venue name and address"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 text-base min-h-0"
           />
+          {!locationUrlManual && locationUrl && (
+            <p className="text-xs text-gray-400 mt-1">Auto-generated — edit to override</p>
+          )}
         </div>
       </div>
 
