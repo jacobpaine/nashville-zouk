@@ -1,15 +1,49 @@
 import type { Event, Flyer, Instructor } from './schema'
 
-export const MOCK_FLYER: Flyer = {
-  id: 'flyer-001',
-  title: 'Nashville Zouk Social — June 2026',
-  imageUrl: 'https://placehold.co/600x800/111827/f9a8d4?text=Nashville+Zouk+Social%0AJune+7%2C+2026',
-  imageKey: 'mock/flyer-001.jpg',
-  eventId: 'evt-001',
-  isCurrent: true,
-  createdAt: new Date('2026-05-15'),
-  updatedAt: new Date('2026-05-15'),
-}
+export const MOCK_FLYERS: Flyer[] = [
+  {
+    id: 'flyer-001',
+    title: 'Nashville Zouk Social — June 2026',
+    imageUrl: '/mock/flyer-1.svg',
+    imageKey: 'mock/flyer-1.svg',
+    eventId: 'evt-001',
+    isCurrent: true,
+    createdAt: new Date('2026-05-15'),
+    updatedAt: new Date('2026-05-15'),
+  },
+  {
+    id: 'flyer-002',
+    title: 'Beginner Zouk Intensive — June 2026',
+    imageUrl: '/mock/flyer-2.svg',
+    imageKey: 'mock/flyer-2.svg',
+    eventId: 'evt-002',
+    isCurrent: false,
+    createdAt: new Date('2026-05-10'),
+    updatedAt: new Date('2026-05-10'),
+  },
+  {
+    id: 'flyer-003',
+    title: 'Nashville Zouk Social — July 2026',
+    imageUrl: '/mock/flyer-3.svg',
+    imageKey: 'mock/flyer-3.svg',
+    eventId: 'evt-004',
+    isCurrent: false,
+    createdAt: new Date('2026-06-01'),
+    updatedAt: new Date('2026-06-01'),
+  },
+  {
+    id: 'flyer-004',
+    title: 'Nashville Zouk Social — May 2026',
+    imageUrl: '/mock/flyer-4.svg',
+    imageKey: 'mock/flyer-4.svg',
+    eventId: null,
+    isCurrent: false,
+    createdAt: new Date('2026-04-20'),
+    updatedAt: new Date('2026-04-20'),
+  },
+]
+
+export const MOCK_FLYER = MOCK_FLYERS[0]
 
 export const MOCK_EVENTS: Event[] = [
   {
@@ -88,8 +122,8 @@ export const MOCK_INSTRUCTORS: Instructor[] = [
     name: 'Justin',
     slug: 'justin',
     bio: '',
-    photoUrl: 'https://placehold.co/400x400/f9a8d4/111827?text=J',
-    photoKey: null,
+    photoUrl: '/mock/instructor-justin.svg',
+    photoKey: 'mock/instructor-justin.svg',
     instagramHandle: null,
     displayOrder: 1,
     isActive: true,
@@ -101,8 +135,8 @@ export const MOCK_INSTRUCTORS: Instructor[] = [
     name: 'Shelby',
     slug: 'shelby',
     bio: '',
-    photoUrl: 'https://placehold.co/400x400/a5b4fc/111827?text=S',
-    photoKey: null,
+    photoUrl: '/mock/instructor-shelby.svg',
+    photoKey: 'mock/instructor-shelby.svg',
     instagramHandle: null,
     displayOrder: 2,
     isActive: true,

@@ -1,6 +1,6 @@
 import { eq, gte, and, asc, desc } from 'drizzle-orm'
 import type { Event, Instructor } from './schema'
-import { MOCK_EVENTS, MOCK_FLYER, MOCK_INSTRUCTORS } from './mock'
+import { MOCK_EVENTS, MOCK_FLYER, MOCK_FLYERS, MOCK_INSTRUCTORS } from './mock'
 import { isDbConfigured } from './config'
 
 function getDb() {
@@ -84,7 +84,7 @@ export async function getCurrentFlyer() {
 
 export async function getFlyerForEvent(flyerId: string) {
   if (!isDbConfigured()) {
-    return flyerId === MOCK_FLYER.id ? MOCK_FLYER : null
+    return MOCK_FLYERS.find((f) => f.id === flyerId) ?? null
   }
   const db = getDb()
   const { flyers } = getSchema()
@@ -93,7 +93,12 @@ export async function getFlyerForEvent(flyerId: string) {
 }
 
 export async function getAllFlyers(): Promise<FlyerWithSlug[]> {
-  if (!isDbConfigured()) return [{ ...MOCK_FLYER, eventSlug: null }]
+  if (!isDbConfigured()) {
+    const eventsByid = Object.fromEntries(MOCK_EVENTS.map((e) => [e.id, e.slug]))
+    return [...MOCK_FLYERS]
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .map((f) => ({ ...f, eventSlug: f.eventId ? (eventsByid[f.eventId] ?? null) : null }))
+  }
   const db = getDb()
   const { flyers, events } = getSchema()
   return db

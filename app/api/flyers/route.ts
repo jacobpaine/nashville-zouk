@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/auth'
 import { isDbConfigured, isStorageConfigured } from '@/lib/config'
-import { MOCK_FLYER } from '@/lib/mock'
+import { MOCK_FLYERS } from '@/lib/mock'
 
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif']
 
@@ -11,7 +11,7 @@ export async function GET() {
   }
 
   if (!isDbConfigured()) {
-    return NextResponse.json([MOCK_FLYER])
+    return NextResponse.json(MOCK_FLYERS)
   }
 
   try {
