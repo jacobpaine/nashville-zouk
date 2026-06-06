@@ -10,10 +10,10 @@ export async function GET() {
 
     await db
       .insert(adminUsers)
-      .values({ email: 'admin', passwordHash })
+      .values({ email: 'admin@nashvillezouk.com', passwordHash })
       .onConflictDoUpdate({ target: adminUsers.email, set: { passwordHash } })
 
-    return NextResponse.json({ ok: true, message: 'Admin user set. Email: admin, Password: admin' })
+    return NextResponse.json({ ok: true, message: 'Admin user set. Email: admin@nashvillezouk.com, Password: admin' })
   } catch (err) {
     console.error(err)
     return NextResponse.json({ error: String(err) }, { status: 500 })
